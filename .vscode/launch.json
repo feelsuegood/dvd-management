@@ -1,0 +1,11 @@
+{
+  "configurations": [
+    {
+      "name": "C#: project1",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/project1/project1.csproj",
+      "launchConfigurationId": "TargetFramework=;project1"
+    }
+  ]
+}
