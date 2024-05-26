@@ -1,24 +1,24 @@
-using DVDManagement.Models;
+using System;
 
-namespace DVDManagement.Collections
+namespace DVDManagement
 {
     public class MemberCollection
     {
         private const int MaxMembers = 1000;
-        private Member?[] members;  // Member? 로 변경
+        private Member[] members;
         private int memberCount;
 
         public MemberCollection()
         {
-            members = new Member?[MaxMembers];  // Member? 로 변경
+            members = new Member[MaxMembers];
             memberCount = 0;
         }
 
-        public int MembersCount => memberCount;  // MembersCount 속성 추가
+        public int MembersCount => memberCount;
 
         public void AddMember(Member member)
         {
-            if (memberCount < MaxMembers && !IsMemberExist(member))
+            if (memberCount < MaxMembers && !IsMemberExist(member.FirstName, member.LastName))
             {
                 members[memberCount] = member;
                 memberCount++;
@@ -29,12 +29,17 @@ namespace DVDManagement.Collections
             }
         }
 
-        public void RemoveMember(Member member)
+        public void RemoveMember(string firstName, string lastName)
         {
             for (int i = 0; i < memberCount; i++)
             {
-                if (members[i]?.FirstName == member.FirstName && members[i]?.LastName == member.LastName)  // null 조건부 연산자 사용
+                if (members[i].FirstName == firstName && members[i].LastName == lastName)
                 {
+                    if (members[i].BorrowedMovies.Length > 0)
+                    {
+                        throw new InvalidOperationException("Member must return all DVDs before being removed.");
+                    }
+
                     for (int j = i; j < memberCount - 1; j++)
                     {
                         members[j] = members[j + 1];
@@ -46,23 +51,53 @@ namespace DVDManagement.Collections
             }
         }
 
-        public Member? FindMember(string firstName, string lastName)  // Member? 로 변경
+        public string FindMemberPhoneNumber(string firstName, string lastName)
         {
             for (int i = 0; i < memberCount; i++)
             {
-                if (members[i]?.FirstName == firstName && members[i]?.LastName == lastName)  // null 조건부 연산자 사용
+                if (members[i].FirstName == firstName && members[i].LastName == lastName)
+                {
+                    return members[i].PhoneNumber;
+                }
+            }
+            return "Member not found.";
+        }
+
+        public Member[] FindMembersByMovie(string title)
+        {
+            Member[] rentingMembers = new Member[memberCount];
+            int rentingMemberCount = 0;
+
+            for (int i = 0; i < memberCount; i++)
+            {
+                if (members[i].HasBorrowedMovie(title))
+                {
+                    rentingMembers[rentingMemberCount] = members[i];
+                    rentingMemberCount++;
+                }
+            }
+
+            Array.Resize(ref rentingMembers, rentingMemberCount);
+            return rentingMembers;
+        }
+
+        public Member? FindMember(string firstName, string lastName)
+        {
+            for (int i = 0; i < memberCount; i++)
+            {
+                if (members[i].FirstName == firstName && members[i].LastName == lastName)
                 {
                     return members[i];
                 }
             }
-            return null;  // null 반환
+            return null;
         }
 
-        private bool IsMemberExist(Member member)
+        public bool IsMemberExist(string firstName, string lastName)
         {
             for (int i = 0; i < memberCount; i++)
             {
-                if (members[i]?.FirstName == member.FirstName && members[i]?.LastName == member.LastName)  // null 조건부 연산자 사용
+                if (members[i].FirstName == firstName && members[i].LastName == lastName)
                 {
                     return true;
                 }

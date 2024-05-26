@@ -1,5 +1,7 @@
+using System;
+using static System.Console;
 
-namespace DVDManagement.Models
+namespace DVDManagement
 {
     public class Movie
     {
@@ -7,18 +9,20 @@ namespace DVDManagement.Models
         public string Genre { get; set; }
         public string Classification { get; set; }
         public int Duration { get; set; }
+        public int Copies { get; set; }
 
-        public Movie(string title, string genre, string classification, int duration)
+        public Movie(string title, string genre, string classification, int duration, int copies)
         {
             Title = title;
             Genre = genre;
             Classification = classification;
             Duration = duration;
+            Copies = copies;
         }
 
         public override string ToString()
         {
-            return $"{Title} - {Genre} - {Classification} - {Duration} minutes";
+            return $"{Title} - {Genre} - {Classification} - {Duration} minutes - Copies: {Copies}";
         }
     }
 }

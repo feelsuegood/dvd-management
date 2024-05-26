@@ -1,5 +1,5 @@
-﻿using DVDManagement.Collections;
-using DVDManagement.Models;
+﻿using System;
+using static System.Console;
 
 namespace DVDManagement
 {
@@ -12,14 +12,22 @@ namespace DVDManagement
         {
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("Welcome to the Community Library DVD Management System");
-                Console.WriteLine("1. Staff Login");
-                Console.WriteLine("2. Member Login");
-                Console.WriteLine("3. Exit");
-                Console.Write("Please select an option: ");
+                Clear();
+                WriteLine("================================================================");
+                WriteLine("COMMUNITY LIBRARY MOVIE DVD MANAGEMENT SYSTEM");
+                WriteLine("================================================================");
+                WriteLine();
+                WriteLine("Main Menu");
+                WriteLine("----------------------------------------------------------------");
+                WriteLine("Select from the following:");
+                WriteLine();
+                WriteLine("1. Staff");
+                WriteLine("2. Member");
+                WriteLine("0. End the program");
+                WriteLine();
+                Write("Enter your choice ==> ");
 
-                switch (Console.ReadLine())
+                switch (ReadLine())
                 {
                     case "1":
                         StaffLogin();
@@ -27,11 +35,11 @@ namespace DVDManagement
                     case "2":
                         MemberLogin();
                         break;
-                    case "3":
+                    case "0":
                         return;
                     default:
-                        Console.WriteLine("Invalid option, please try again.");
-                        Console.ReadLine(); // Changed to Console.ReadLine
+                        WriteLine("Invalid choice, Please enter 1, 2 or 0.");
+                        ReadLine();
                         break;
                 }
             }
@@ -39,10 +47,10 @@ namespace DVDManagement
 
         static void StaffLogin()
         {
-            Console.Write("Enter staff username: ");
-            string username = Console.ReadLine() ?? string.Empty;
-            Console.Write("Enter staff password: ");
-            string password = Console.ReadLine() ?? string.Empty;
+            Write("Enter staff username ==> ");
+            string username = ReadLine() ?? string.Empty;
+            Write("Enter staff password ==> ");
+            string password = ReadLine() ?? string.Empty;
 
             if (username == "staff" && password == "today123")
             {
@@ -50,36 +58,37 @@ namespace DVDManagement
             }
             else
             {
-                Console.WriteLine("Invalid credentials. Press any key to return to the main menu.");
-                Console.ReadLine(); // Changed to Console.ReadLine
+                WriteLine("Invalid username or password");
+                WriteLine("You go back to main menu by pressing any key.");
+                ReadLine();
             }
         }
 
         static void MemberLogin()
         {
-            Console.Write("Enter first name: ");
-            string firstName = Console.ReadLine() ?? string.Empty;
-            Console.Write("Enter last name: ");
-            string lastName = Console.ReadLine() ?? string.Empty;
-            Console.Write("Enter password: ");
-            string password = Console.ReadLine() ?? string.Empty;
+            Write("Enter first name ==> ");
+            string firstName = ReadLine() ?? string.Empty;
+            Write("Enter last name ==> ");
+            string lastName = ReadLine() ?? string.Empty;
+            Write("Enter password ==> ");
+            string password = ReadLine() ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(password))
             {
-                Console.WriteLine("Invalid input. Press any key to return to the main menu.");
-                Console.ReadLine(); // Changed to Console.ReadLine
+                WriteLine("Invalid input. You go back to main menu by pressing any key.");
+                ReadLine();
                 return;
             }
 
             Member? member = memberCollection.FindMember(firstName, lastName);
-            if (member != null)
+            if (member != null && member.Password == password)
             {
                 MemberMenu(member);
             }
             else
             {
-                Console.WriteLine("Member not found or invalid credentials. Press any key to return to the main menu.");
-                Console.ReadLine(); // Changed to Console.ReadLine
+                WriteLine("Member not found or invalid credentials. You go back to main menu by pressing any key.");
+                ReadLine();
             }
         }
 
@@ -87,18 +96,20 @@ namespace DVDManagement
         {
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("Staff Menu");
-                Console.WriteLine("1. Add Movie");
-                Console.WriteLine("2. Remove Movie");
-                Console.WriteLine("3. Register Member");
-                Console.WriteLine("4. Remove Member");
-                Console.WriteLine("5. Find Member's Contact Number");
-                Console.WriteLine("6. List Members Borrowing a Movie");
-                Console.WriteLine("7. Logout");
-                Console.Write("Please select an option: ");
+                Clear();
+                WriteLine("Staff Menu");
+                WriteLine("----------------------------------------------------------------");
+                WriteLine("1. Add DVDs to system");
+                WriteLine("2. Remove DVDs from system");
+                WriteLine("3. Register a new member to system");
+                WriteLine("4. Remove a registered member from system");
+                WriteLine("5. Find a member contact phone number, given the member's name");
+                WriteLine("6. Find members who are currently renting a particular movie");
+                WriteLine("7. Display all movies in dictionary order");
+                WriteLine("8. Display the top 3 movies borrowed most frequently");
+                WriteLine("0. Return to main menu");
 
-                switch (Console.ReadLine())
+                switch (ReadLine())
                 {
                     case "1":
                         AddMovie();
@@ -113,16 +124,22 @@ namespace DVDManagement
                         RemoveMember();
                         break;
                     case "5":
-                        FindMemberContact();
+                        FindMemberPhoneNumber();
                         break;
                     case "6":
                         ListMembersBorrowingMovie();
                         break;
                     case "7":
+                        DisplayAllMoviesInDictionaryOrder();
+                        break;
+                    case "8":
+                        DisplayTop3Movies();
+                        break;
+                    case "0":
                         return;
                     default:
-                        Console.WriteLine("Invalid option, please try again.");
-                        Console.ReadLine(); // Changed to Console.ReadLine
+                        WriteLine("Invalid input, please try again.");
+                        ReadLine();
                         break;
                 }
             }
@@ -132,24 +149,25 @@ namespace DVDManagement
         {
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine($"Welcome, {member.FirstName} {member.LastName}");
-                Console.WriteLine("1. Display All Movies");
-                Console.WriteLine("2. Display Movie Information");
-                Console.WriteLine("3. Borrow Movie");
-                Console.WriteLine("4. Return Movie");
-                Console.WriteLine("5. List Borrowed Movies");
-                Console.WriteLine("6. Display Top 3 Borrowed Movies");
-                Console.WriteLine("7. Logout");
-                Console.Write("Please select an option: ");
+                Clear();
+                WriteLine("Member Menu");
+                WriteLine("----------------------------------------------------------------");
+                WriteLine("1. Browse all the movies");
+                WriteLine("2. Display all the information about a movie, given the title of the movie");
+                WriteLine("3. Borrow a movie DVD");
+                WriteLine("4. Return a movie DVD");
+                WriteLine("5. List current borrowing movies");
+                WriteLine("0. Return to main menu");
+                WriteLine();
+                Write("Enter your choice ==> ");
 
-                switch (Console.ReadLine())
+                switch (ReadLine())
                 {
                     case "1":
                         DisplayAllMovies();
                         break;
                     case "2":
-                        DisplayMovieInformation();
+                        DisplayMovieInfo();
                         break;
                     case "3":
                         BorrowMovie(member);
@@ -160,14 +178,11 @@ namespace DVDManagement
                     case "5":
                         ListBorrowedMovies(member);
                         break;
-                    case "6":
-                        DisplayTopBorrowedMovies();
-                        break;
-                    case "7":
+                    case "0":
                         return;
                     default:
-                        Console.WriteLine("Invalid option, please try again.");
-                        Console.ReadLine(); // Changed to Console.ReadLine
+                        WriteLine("Invalid input, please enter from 0 to 5.");
+                        ReadLine();
                         break;
                 }
             }
@@ -175,193 +190,294 @@ namespace DVDManagement
 
         static void AddMovie()
         {
-            Console.Write("Enter movie title: ");
-            string? title = Console.ReadLine();
-            Console.Write("Enter genre: ");
-            string? genre = Console.ReadLine();
-            Console.Write("Enter classification: ");
-            string? classification = Console.ReadLine();
-            Console.Write("Enter duration in minutes: ");
-            string? durationInput = Console.ReadLine();
+            string? title = null;
+            string? genre = null;
+            string? classification = null;
+            int duration = -1;
+            int copies = -1;
 
-            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(genre) || string.IsNullOrWhiteSpace(classification) || string.IsNullOrWhiteSpace(durationInput) || !int.TryParse(durationInput, out int duration))
+            while (string.IsNullOrWhiteSpace(title))
             {
-                Console.WriteLine("Invalid input. Press any key to return to the menu.");
-                Console.ReadLine(); // Changed to Console.ReadLine
-                return;
+                Write("Please enter movie title ==> ");
+                title = ReadLine();
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    WriteLine("Invalid title. Please try again.");
+                }
             }
 
-            Movie movie = new Movie(title, genre, classification, duration);
+            while (!CheckGenre(genre))
+            {
+                WriteLine("You can choose genre from Drama, Adventure, Family, Action, Sci-fi, Comedy, Animated, Thriller, or Other");
+                Write("Enter genre ==> ");
+                genre = ReadLine();
+                if (!CheckGenre(genre))
+                {
+                    WriteLine("Invalid genre. Please try again.");
+                }
+            }
+
+            while (!CheckClass(classification))
+            {
+                WriteLine("You can choose classification from General (G), Parental Guidance (PG), Mature (M15+), or Mature Accompanied (MA15+)");
+                WriteLine("Only code input is valid. e.g. Parental Guidance (X) PG (O)");
+                Write("Enter classification ==> ");
+                classification = ReadLine();
+                if (!CheckClass(classification))
+                {
+                    WriteLine("Invalid classification. Please try again.");
+                }
+            }
+
+            while (duration < 0 || duration > 300)
+            {
+                WriteLine("You can enter duration in minutes from 0 to 300 minutes.");
+                Write("Enter duration in minutes ==> ");
+                string? durationInput = ReadLine();
+                if (!int.TryParse(durationInput, out duration) || duration < 0 || duration > 300)
+                {
+                    WriteLine("Invalid duration. Please try again.");
+                }
+            }
+
+            while (copies <= 0)
+            {
+                WriteLine("You can enter the number of copies (must be greater than 0).");
+                Write("Enter the number of copies ==> ");
+                string? copiesInput = ReadLine();
+                if (!int.TryParse(copiesInput, out copies) || copies <= 0)
+                {
+                    WriteLine("Invalid number of copies. Please try again.");
+                }
+            }
+
+            Movie movie = new Movie(title, genre!, classification!, duration, copies);
             movieCollection.AddMovie(movie);
 
-            Console.WriteLine("Movie added successfully. Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            WriteLine("Movie added successfully. Please enter any key to go back to the menu.");
+            ReadLine();
+        }
+
+        static bool CheckGenre(string? genre)
+        {
+            string[] validGenres = { "Drama", "Adventure", "Family", "Action", "Sci-fi", "Comedy", "Animated", "Thriller", "Other" };
+            return genre != null && validGenres.Contains(genre);
+        }
+
+        static bool CheckClass(string? classification)
+        {
+            string[] validClassifications = { "G", "PG", "M15+", "MA15+" };
+            return classification != null && validClassifications.Contains(classification);
         }
 
         static void RemoveMovie()
         {
-            Console.Write("Enter movie title to remove: ");
-            string? title = Console.ReadLine();
+            Write("Enter movie title to remove ==> ");
+            string? title = ReadLine();
 
             if (string.IsNullOrWhiteSpace(title))
             {
-                Console.WriteLine("Invalid input. Press any key to return to the menu.");
-                Console.ReadLine(); // Changed to Console.ReadLine
+                WriteLine("Invalid input. Please enter any key to go back to the menu.");
+                ReadLine();
                 return;
             }
 
-            movieCollection.RemoveMovie(title);
+            Write("Enter number of copies to remove ==> ");
+            string? copiesInput = ReadLine();
+            if (!int.TryParse(copiesInput, out int copies) || copies <= 0)
+            {
+                WriteLine("Invalid number of copies. Please enter any key to go back to the menu.");
+                ReadLine();
+                return;
+            }
 
-            Console.WriteLine("Movie removed successfully. Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            try
+            {
+                movieCollection.RemoveMovie(title, copies);
+                WriteLine("Movies removed successfully. Please enter any key to go back to the menu.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                WriteLine(ex.Message);
+            }
+
+            ReadLine();
         }
 
         static void RegisterMember()
         {
-            Console.Write("Enter first name: ");
-            string? firstName = Console.ReadLine();
-            Console.Write("Enter last name: ");
-            string? lastName = Console.ReadLine();
-            Console.Write("Enter phone number: ");
-            string? phoneNumber = Console.ReadLine();
+            Write("Enter first name ==> ");
+            string? firstName = ReadLine();
+            Write("Enter last name ==> ");
+            string? lastName = ReadLine();
+            Write("Enter phone number ==> ");
+            string? phoneNumber = ReadLine();
 
             if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(phoneNumber))
             {
-                Console.WriteLine("Invalid input. Press any key to return to the menu.");
-                Console.ReadLine(); // Changed to Console.ReadLine
+                WriteLine("Invalid input. Please enter any key to go back to the menu.");
+                ReadLine();
                 return;
             }
 
-            Member member = new Member(firstName, lastName, phoneNumber);
+            if (memberCollection.IsMemberExist(firstName, lastName))
+            {
+                WriteLine("Member already exists. Please enter any key to go back to the menu.");
+                ReadLine();
+                return;
+            }
+
+            string? password = null;
+            while (string.IsNullOrWhiteSpace(password) || password.Length != 4 || !int.TryParse(password, out _))
+            {
+                Write("Enter a 4-digit password for the member ==> ");
+                password = ReadLine();
+                if (string.IsNullOrWhiteSpace(password) || password.Length != 4 || !int.TryParse(password, out _))
+                {
+                    WriteLine("Invalid password. Please enter a valid 4-digit password.");
+                }
+            }
+
+            Member member = new Member(firstName, lastName, phoneNumber, password);
             memberCollection.AddMember(member);
 
-            Console.WriteLine("Member registered successfully. Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            WriteLine("Member registered successfully. Please enter any key to go back to the menu.");
+            ReadLine();
         }
 
         static void RemoveMember()
         {
-            Console.Write("Enter first name: ");
-            string? firstName = Console.ReadLine();
-            Console.Write("Enter last name: ");
-            string? lastName = Console.ReadLine();
+            Write("Enter first name ==> ");
+            string? firstName = ReadLine();
+            Write("Enter last name ==> ");
+            string? lastName = ReadLine();
 
             if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
             {
-                Console.WriteLine("Invalid input. Press any key to return to the menu.");
-                Console.ReadLine(); // Changed to Console.ReadLine
+                WriteLine("Invalid input. Please enter any key to go back to the menu.");
+                ReadLine();
                 return;
             }
 
-            Member? member = memberCollection.FindMember(firstName, lastName);
-            if (member != null && member.BorrowedMovies.Length == 0)
+            try
             {
-                memberCollection.RemoveMember(member);
-                Console.WriteLine("Member removed successfully. Press any key to return to the menu.");
+                memberCollection.RemoveMember(firstName, lastName);
+                WriteLine("Member removed successfully. Please enter any key to go back to the menu.");
             }
-            else
+            catch (InvalidOperationException ex)
             {
-                Console.WriteLine("Member not found or has borrowed movies. Press any key to return to the menu.");
+                WriteLine(ex.Message);
             }
-            Console.ReadLine(); // Changed to Console.ReadLine
+
+            ReadLine();
         }
 
-        static void FindMemberContact()
+        static void FindMemberPhoneNumber()
         {
-            Console.Write("Enter first name: ");
-            string? firstName = Console.ReadLine();
-            Console.Write("Enter last name: ");
-            string? lastName = Console.ReadLine();
+            Write("Enter first name ==> ");
+            string? firstName = ReadLine();
+            Write("Enter last name ==> ");
+            string? lastName = ReadLine();
 
             if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
             {
-                Console.WriteLine("Invalid input. Press any key to return to the menu.");
-                Console.ReadLine(); // Changed to Console.ReadLine
+                WriteLine("Invalid input. Please enter any key to go back to the menu.");
+                ReadLine();
                 return;
             }
 
-            Member? member = memberCollection.FindMember(firstName, lastName);
-            if (member != null)
-            {
-                Console.WriteLine($"Contact Number: {member.PhoneNumber}");
-            }
-            else
-            {
-                Console.WriteLine("Member not found.");
-            }
-            Console.WriteLine("Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            string phoneNumber = memberCollection.FindMemberPhoneNumber(firstName, lastName);
+            WriteLine($"Phone Number: {phoneNumber}");
+            WriteLine("Please enter any key to go back to the menu.");
+            ReadLine();
         }
 
         static void ListMembersBorrowingMovie()
         {
-            Console.Write("Enter movie title: ");
-            string? title = Console.ReadLine();
+            Write("Enter movie title ==> ");
+            string? title = ReadLine();
 
             if (string.IsNullOrWhiteSpace(title))
             {
-                Console.WriteLine("Invalid input. Press any key to return to the menu.");
-                Console.ReadLine(); // Changed to Console.ReadLine
+                WriteLine("Invalid input. Please enter any key to go back to the menu.");
+                ReadLine();
                 return;
             }
 
-            Console.WriteLine("Members currently borrowing this movie:");
-            for (int i = 0; i < memberCollection.MembersCount; i++)
+            Member[] rentingMembers = memberCollection.FindMembersByMovie(title);
+            if (rentingMembers.Length > 0)
             {
-                Member? member = memberCollection.GetMember(i);
-                if (member != null && member.HasBorrowedMovie(title))
+                WriteLine("Members currently renting this movie:");
+                foreach (var member in rentingMembers)
                 {
-                    Console.WriteLine($"{member.FirstName} {member.LastName}");
+                    WriteLine($"{member.FirstName} {member.LastName} - {member.PhoneNumber}");
                 }
             }
-            Console.WriteLine("Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            else
+            {
+                WriteLine("No members are currently renting this movie.");
+            }
+
+            WriteLine("Please enter any key to go back to the menu.");
+            ReadLine();
         }
 
         static void DisplayAllMovies()
         {
-            Console.WriteLine("All Movies:");
+            WriteLine("All Movies:");
             for (int i = 0; i < movieCollection.MovieCount; i++)
             {
                 Movie? movie = movieCollection.GetMovie(i);
                 if (movie != null)
                 {
-                    Console.WriteLine(movie);
+                    WriteLine(movie);
                 }
             }
-            Console.WriteLine("Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            WriteLine("Please enter any key to go back to the menu.");
+            ReadLine();
         }
 
-        static void DisplayMovieInformation()
+        static void DisplayAllMoviesInDictionaryOrder()
         {
-            Console.Write("Enter movie title: ");
-            string? title = Console.ReadLine();
+            WriteLine("All Movies in Dictionary Order:");
+            Movie[] sortedMovies = movieCollection.GetMoviesInDictionaryOrder();
+            foreach (Movie movie in sortedMovies)
+            {
+                WriteLine(movie);
+            }
+            WriteLine("Please enter any key to go back to the menu.");
+            ReadLine();
+        }
+
+        static void DisplayMovieInfo()
+        {
+            Write("Enter movie title ==> ");
+            string? title = ReadLine();
 
             if (!string.IsNullOrWhiteSpace(title))
             {
                 Movie? movie = movieCollection.FindMovie(title);
                 if (movie != null)
                 {
-                    Console.WriteLine(movie);
+                    WriteLine(movie);
                 }
                 else
                 {
-                    Console.WriteLine("Movie not found.");
+                    WriteLine("Movie not found.");
                 }
             }
             else
             {
-                Console.WriteLine("Invalid movie title.");
+                WriteLine("Invalid movie title.");
             }
-            Console.WriteLine("Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            WriteLine("Please enter any key to go back to the menu.");
+            ReadLine();
         }
 
         static void BorrowMovie(Member member)
         {
-            Console.Write("Enter movie title to borrow: ");
-            string? title = Console.ReadLine();
+            Write("Enter movie title to borrow ==> ");
+            string? title = ReadLine();
 
             if (!string.IsNullOrWhiteSpace(title))
             {
@@ -371,30 +487,31 @@ namespace DVDManagement
                     try
                     {
                         member.BorrowMovie(movie);
-                        Console.WriteLine("Movie borrowed successfully.");
+                        movieCollection.BorrowMovie(title);
+                        WriteLine("Movie borrowed successfully.");
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e.Message);
+                        WriteLine(e.Message);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Movie not found.");
+                    WriteLine("Movie not found.");
                 }
             }
             else
             {
-                Console.WriteLine("Invalid movie title.");
+                WriteLine("Invalid movie title.");
             }
-            Console.WriteLine("Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            WriteLine("Please enter any key to go back to the menu.");
+            ReadLine();
         }
 
         static void ReturnMovie(Member member)
         {
-            Console.Write("Enter movie title to return: ");
-            string? title = Console.ReadLine();
+            Write("Enter movie title to return ==> ");
+            string? title = ReadLine();
 
             if (!string.IsNullOrWhiteSpace(title))
             {
@@ -402,47 +519,46 @@ namespace DVDManagement
                 if (movie != null)
                 {
                     member.ReturnMovie(movie);
-                    Console.WriteLine("Movie returned successfully.");
+                    movieCollection.ReturnMovie(title);
+                    WriteLine("Movie returned successfully.");
                 }
                 else
                 {
-                    Console.WriteLine("Movie not found.");
+                    WriteLine("Movie not found.");
                 }
             }
             else
             {
-                Console.WriteLine("Invalid movie title.");
+                WriteLine("Invalid movie title.");
             }
-            Console.WriteLine("Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            WriteLine("Please enter any key to go back to the menu.");
+            ReadLine();
         }
 
         static void ListBorrowedMovies(Member member)
         {
-            Console.WriteLine("Borrowed Movies:");
+            WriteLine("Borrowed Movies:");
             foreach (Movie? movie in member.BorrowedMovies)
             {
                 if (movie != null)
                 {
-                    Console.WriteLine(movie);
+                    WriteLine(movie);
                 }
             }
-            Console.WriteLine("Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            WriteLine("Please enter any key to go back to the menu.");
+            ReadLine();
         }
 
-        static void DisplayTopBorrowedMovies()
+        static void DisplayTop3Movies()
         {
-            // Implementation for displaying top 3 borrowed movies
-            // This part requires additional tracking for borrow count which needs to be implemented in MovieCollection class
-            Console.WriteLine("Top 3 Borrowed Movies:");
-            // Example:
-            // Console.WriteLine("1. Movie Title - 10 times");
-            // Console.WriteLine("2. Movie Title - 8 times");
-            // Console.WriteLine("3. Movie Title - 6 times");
-
-            Console.WriteLine("Press any key to return to the menu.");
-            Console.ReadLine(); // Changed to Console.ReadLine
+            WriteLine("Top 3 Borrowed Movies:");
+            var topMovies = movieCollection.GetTop3Movies();
+            foreach (var (Title, Count) in topMovies)
+            {
+                WriteLine($"{Title} - {Count} times");
+            }
+            WriteLine("Please enter any key to go back to the menu.");
+            ReadLine();
         }
     }
 }
