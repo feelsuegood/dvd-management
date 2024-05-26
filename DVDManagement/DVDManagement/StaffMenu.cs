@@ -318,7 +318,7 @@ namespace DVDManagement
                 if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
                 {
                     WriteLine("* 0 to go back");
-                    WriteLine("Invalid input.");
+                    WriteLine("Invalid input. Please enter any key to retry ==> ");
                     if (ReadLine() == "0") return;
                     continue;
                 }
