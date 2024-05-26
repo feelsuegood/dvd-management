@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 using static System.Console;
 
 namespace DVDManagement
@@ -22,7 +24,13 @@ namespace DVDManagement
 
         public override string ToString()
         {
-            return $"{Title} - {Genre} - {Classification} - {Duration} minutes - Copies: {Copies}";
+            return $"{Title},{Genre},{Classification},{Duration},{Copies}";
+        }
+
+        public static Movie FromString(string data)
+        {
+            var parts = data.Split(',');
+            return new Movie(parts[0], parts[1], parts[2], int.Parse(parts[3]), int.Parse(parts[4]));
         }
     }
 }

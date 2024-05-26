@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 using static System.Console;
 
 namespace DVDManagement
@@ -74,6 +76,26 @@ namespace DVDManagement
                 }
             }
             return false;
+        }
+
+        public string Serialize()
+        {
+            string borrowedMovies = string.Join(",", BorrowedMovies.Select(m => m?.Title ?? "null"));
+            return $"{FirstName},{LastName},{PhoneNumber},{Password},{borrowedMovies}";
+        }
+
+        public static Member Deserialize(string data)
+        {
+            var parts = data.Split(',');
+            var member = new Member(parts[0], parts[1], parts[2], parts[3]);
+            for (int i = 0; i < 5; i++)
+            {
+                if (parts[4 + i] != "null")
+                {
+                    member.BorrowedMovies[i] = new Movie(parts[4 + i], "", "", 0, 1); // Placeholder for deserialized movies
+                }
+            }
+            return member;
         }
     }
 }

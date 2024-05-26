@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using static System.Console;
 
 namespace DVDManagement
@@ -44,53 +46,75 @@ namespace DVDManagement
                 }
             }
         }
+        static void OnProcessExit(object sender, EventArgs e)
+        {
+            memberCollection.SaveMembers();
+            movieCollection.SaveMovies();
+        }
 
         static void StaffLogin()
         {
-            Write("Enter staff username ==> ");
-            string username = ReadLine() ?? string.Empty;
-            Write("Enter staff password ==> ");
-            string password = ReadLine() ?? string.Empty;
+            while (true)
+            {
+                Write("Enter staff username (or 0 to go back) ==> ");
+                string username = ReadLine() ?? string.Empty;
+                if (username == "0") return;
 
-            if (username == "staff" && password == "today123")
-            {
-                StaffMenu();
-            }
-            else
-            {
-                WriteLine("Invalid username or password");
-                WriteLine("You go back to main menu by pressing any key.");
-                ReadLine();
+                Write("Enter staff password (or 0 to go back) ==> ");
+                string password = ReadLine() ?? string.Empty;
+                if (password == "0") return;
+
+                if (username == "staff" && password == "today123")
+                {
+                    StaffMenu();
+                    return;
+                }
+                else
+                {
+                    WriteLine("Invalid username or password");
+                    WriteLine("Press any key to retry or enter 0 to go back to the main menu.");
+                    if (ReadLine() == "0") return;
+                }
             }
         }
 
         static void MemberLogin()
         {
-            Write("Enter first name ==> ");
-            string firstName = ReadLine() ?? string.Empty;
-            Write("Enter last name ==> ");
-            string lastName = ReadLine() ?? string.Empty;
-            Write("Enter password ==> ");
-            string password = ReadLine() ?? string.Empty;
+            while (true)
+            {
+                Write("Enter first name (or 0 to go back) ==> ");
+                string firstName = ReadLine() ?? string.Empty;
+                if (firstName == "0") return;
 
-            if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(password))
-            {
-                WriteLine("Invalid input. You go back to main menu by pressing any key.");
-                ReadLine();
-                return;
-            }
+                Write("Enter last name (or 0 to go back) ==> ");
+                string lastName = ReadLine() ?? string.Empty;
+                if (lastName == "0") return;
 
-            Member? member = memberCollection.FindMember(firstName, lastName);
-            if (member != null && member.Password == password)
-            {
-                MemberMenu(member);
-            }
-            else
-            {
-                WriteLine("Member not found or invalid credentials. You go back to main menu by pressing any key.");
-                ReadLine();
+                Write("Enter password (or 0 to go back) ==> ");
+                string password = ReadLine() ?? string.Empty;
+                if (password == "0") return;
+
+                if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(password))
+                {
+                    WriteLine("Invalid input. Press any key to retry or enter 0 to go back to the main menu.");
+                    if (ReadLine() == "0") return;
+                    continue;
+                }
+
+                Member? member = memberCollection.FindMember(firstName, lastName);
+                if (member != null && member.Password == password)
+                {
+                    MemberMenu(member);
+                    return;
+                }
+                else
+                {
+                    WriteLine("Member not found or invalid credentials. Press any key to retry or enter 0 to go back to the main menu.");
+                    if (ReadLine() == "0") return;
+                }
             }
         }
+
 
         static void StaffMenu()
         {
@@ -138,7 +162,7 @@ namespace DVDManagement
                     case "0":
                         return;
                     default:
-                        WriteLine("Invalid input, please try again.");
+                        WriteLine("Invalid input, , please enter from 0 to 8.");
                         ReadLine();
                         break;
                 }
@@ -188,7 +212,7 @@ namespace DVDManagement
             }
         }
 
-        static void AddMovie()
+        public static void AddMovie()
         {
             string? title = null;
             string? genre = null;
@@ -196,66 +220,97 @@ namespace DVDManagement
             int duration = -1;
             int copies = -1;
 
-            while (string.IsNullOrWhiteSpace(title))
+            while (true)
             {
-                Write("Please enter movie title ==> ");
+                Write("Please enter movie title (or 0 to go back) ==> ");
                 title = ReadLine();
+                if (title == "0") return;
                 if (string.IsNullOrWhiteSpace(title))
                 {
                     WriteLine("Invalid title. Please try again.");
+                    continue;
                 }
-            }
 
-            while (!CheckGenre(genre))
-            {
-                WriteLine("You can choose genre from Drama, Adventure, Family, Action, Sci-fi, Comedy, Animated, Thriller, or Other");
-                Write("Enter genre ==> ");
-                genre = ReadLine();
-                if (!CheckGenre(genre))
+                Movie existingMovie = movieCollection.FindMovie(title);
+                if (existingMovie != null)
                 {
-                    WriteLine("Invalid genre. Please try again.");
+                    WriteLine("Movie already exists. Please enter the number of copies to add.");
+                    while (copies <= 0)
+                    {
+                        Write("Enter the number of copies (must be greater than 0) (or 0 to go back) ==> ");
+                        string? copiesInput = ReadLine();
+                        if (copiesInput == "0") return;
+                        if (!int.TryParse(copiesInput, out copies) || copies <= 0)
+                        {
+                            WriteLine("Invalid number of copies. Please try again.");
+                        }
+                    }
+                    existingMovie.Copies += copies;
+                    movieCollection.SaveMovies();
+                    WriteLine("Copies added successfully. Please enter any key to go back to the menu.");
+                    ReadLine();
+                    return;
                 }
-            }
-
-            while (!CheckClass(classification))
-            {
-                WriteLine("You can choose classification from General (G), Parental Guidance (PG), Mature (M15+), or Mature Accompanied (MA15+)");
-                WriteLine("Only code input is valid. e.g. Parental Guidance (X) PG (O)");
-                Write("Enter classification ==> ");
-                classification = ReadLine();
-                if (!CheckClass(classification))
+                else
                 {
-                    WriteLine("Invalid classification. Please try again.");
+                    while (!CheckGenre(genre))
+                    {
+                        WriteLine("You can choose genre from Drama, Adventure, Family, Action, Sci-fi, Comedy, Animated, Thriller, or Other");
+                        Write("Enter genre (or 0 to go back) ==> ");
+                        genre = ReadLine();
+                        if (genre == "0") return;
+                        if (!CheckGenre(genre))
+                        {
+                            WriteLine("Invalid genre. Please try again.");
+                        }
+                    }
+
+                    while (!CheckClass(classification))
+                    {
+                        WriteLine("You can choose classification from General (G), Parental Guidance (PG), Mature (M15+), or Mature Accompanied (MA15+)");
+                        WriteLine("Only code input is valid. e.g. Parental Guidance (X) PG (O)");
+                        Write("Enter classification (or 0 to go back) ==> ");
+                        classification = ReadLine();
+                        if (classification == "0") return;
+                        if (!CheckClass(classification))
+                        {
+                            WriteLine("Invalid classification. Please try again.");
+                        }
+                    }
+
+                    while (duration < 0 || duration > 300)
+                    {
+                        WriteLine("You can enter duration in minutes from 0 to 300 minutes.");
+                        Write("Enter duration in minutes (or 0 to go back) ==> ");
+                        string? durationInput = ReadLine();
+                        if (durationInput == "0") return;
+                        if (!int.TryParse(durationInput, out duration) || duration < 0 || duration > 300)
+                        {
+                            WriteLine("Invalid duration. Please try again.");
+                        }
+                    }
+
+                    while (copies <= 0)
+                    {
+                        WriteLine("You can enter the number of copies (must be greater than 0).");
+                        Write("Enter the number of copies (or 0 to go back) ==> ");
+                        string? copiesInput = ReadLine();
+                        if (copiesInput == "0") return;
+                        if (!int.TryParse(copiesInput, out copies) || copies <= 0)
+                        {
+                            WriteLine("Invalid number of copies. Please try again.");
+                        }
+                    }
+
+                    Movie movie = new Movie(title, genre!, classification!, duration, copies);
+                    movieCollection.AddMovie(movie);
+                    movieCollection.SaveMovies();
+
+                    WriteLine("Movie added successfully. Please enter any key to go back to the menu.");
+                    ReadLine();
+                    return;
                 }
             }
-
-            while (duration < 0 || duration > 300)
-            {
-                WriteLine("You can enter duration in minutes from 0 to 300 minutes.");
-                Write("Enter duration in minutes ==> ");
-                string? durationInput = ReadLine();
-                if (!int.TryParse(durationInput, out duration) || duration < 0 || duration > 300)
-                {
-                    WriteLine("Invalid duration. Please try again.");
-                }
-            }
-
-            while (copies <= 0)
-            {
-                WriteLine("You can enter the number of copies (must be greater than 0).");
-                Write("Enter the number of copies ==> ");
-                string? copiesInput = ReadLine();
-                if (!int.TryParse(copiesInput, out copies) || copies <= 0)
-                {
-                    WriteLine("Invalid number of copies. Please try again.");
-                }
-            }
-
-            Movie movie = new Movie(title, genre!, classification!, duration, copies);
-            movieCollection.AddMovie(movie);
-
-            WriteLine("Movie added successfully. Please enter any key to go back to the menu.");
-            ReadLine();
         }
 
         static bool CheckGenre(string? genre)
@@ -422,20 +477,20 @@ namespace DVDManagement
             ReadLine();
         }
 
+
         static void DisplayAllMovies()
         {
             WriteLine("All Movies:");
-            for (int i = 0; i < movieCollection.MovieCount; i++)
+            Movie[] allMovies = movieCollection.GetAllMovies();
+            foreach (var movie in allMovies)
             {
-                Movie? movie = movieCollection.GetMovie(i);
-                if (movie != null)
-                {
-                    WriteLine(movie);
-                }
+                WriteLine(movie);
             }
             WriteLine("Please enter any key to go back to the menu.");
             ReadLine();
         }
+
+
 
         static void DisplayAllMoviesInDictionaryOrder()
         {

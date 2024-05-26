@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using System.Linq;
+using static System.Console;
 
 namespace DVDManagement
 {
@@ -7,11 +10,13 @@ namespace DVDManagement
         private const int MaxMembers = 1000;
         private Member[] members;
         private int memberCount;
+        private const string filePath = "members.txt";
 
         public MemberCollection()
         {
             members = new Member[MaxMembers];
             memberCount = 0;
+            LoadMembers();
         }
 
         public int MembersCount => memberCount;
@@ -22,6 +27,7 @@ namespace DVDManagement
             {
                 members[memberCount] = member;
                 memberCount++;
+                SaveMembers();
             }
             else
             {
@@ -46,6 +52,7 @@ namespace DVDManagement
                     }
                     members[memberCount - 1] = null;
                     memberCount--;
+                    SaveMembers();
                     break;
                 }
             }
@@ -112,6 +119,33 @@ namespace DVDManagement
                 return members[index];
             }
             return null;
+        }
+
+        public void SaveMembers()
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                for (int i = 0; i < memberCount; i++)
+                {
+                    writer.WriteLine(members[i].Serialize());
+                }
+            }
+        }
+
+        public void LoadMembers()
+        {
+            if (File.Exists(filePath))
+            {
+                using (StreamReader reader = new StreamReader(filePath))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        var member = Member.Deserialize(line);
+                        members[memberCount++] = member;
+                    }
+                }
+            }
         }
     }
 }

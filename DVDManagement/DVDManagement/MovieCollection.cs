@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 
 namespace DVDManagement
 {
@@ -9,6 +11,7 @@ namespace DVDManagement
         private int movieCount;
         private string[] borrowTitles;
         private int[] borrowCounts;
+        private const string filePath = "movies.txt";
 
         public MovieCollection()
         {
@@ -16,6 +19,7 @@ namespace DVDManagement
             borrowTitles = new string[MaxMovies];
             borrowCounts = new int[MaxMovies];
             movieCount = 0;
+            LoadMovies(); // 변경됨: LoadMovies 호출 추가
         }
 
         public int MovieCount => movieCount;
@@ -41,6 +45,7 @@ namespace DVDManagement
             if (movies[index] != null && movies[index].Title == movie.Title)
             {
                 movies[index].Copies += movie.Copies;
+                SaveMovies(); // 변경됨: SaveMovies 호출 추가
             }
             else if (movieCount < MaxMovies)
             {
@@ -50,23 +55,25 @@ namespace DVDManagement
                 }
                 movies[index] = movie;
                 movieCount++;
+
+                if (Array.IndexOf(borrowTitles, movie.Title) == -1)
+                {
+                    for (int i = 0; i < borrowTitles.Length; i++)
+                    {
+                        if (borrowTitles[i] == null)
+                        {
+                            borrowTitles[i] = movie.Title;
+                            borrowCounts[i] = 0;
+                            break;
+                        }
+                    }
+                }
+
+                SaveMovies(); // 변경됨: SaveMovies 호출 추가
             }
             else
             {
                 throw new InvalidOperationException("Cannot add more movies.");
-            }
-
-            if (Array.IndexOf(borrowTitles, movie.Title) == -1)
-            {
-                for (int i = 0; i < borrowTitles.Length; i++)
-                {
-                    if (borrowTitles[i] == null)
-                    {
-                        borrowTitles[i] = movie.Title;
-                        borrowCounts[i] = 0;
-                        break;
-                    }
-                }
             }
         }
 
@@ -102,6 +109,8 @@ namespace DVDManagement
                         }
                     }
                 }
+
+                SaveMovies(); // 변경됨: SaveMovies 호출 추가
             }
             else
             {
@@ -119,6 +128,21 @@ namespace DVDManagement
             return movies[index];
         }
 
+        public Movie[] GetAllMovies()
+        {
+            Movie[] allMovies = new Movie[movieCount];
+            int count = 0;
+            for (int i = 0; i < MaxMovies; i++)
+            {
+                if (movies[i] != null)
+                {
+                    allMovies[count++] = movies[i];
+                }
+            }
+            Array.Sort(allMovies, (x, y) => x.Title.CompareTo(y.Title));
+            return allMovies;
+        }
+
         public void BorrowMovie(string title)
         {
             Movie movie = FindMovie(title);
@@ -133,6 +157,8 @@ namespace DVDManagement
             {
                 borrowCounts[index]++;
             }
+
+            SaveMovies(); // 변경됨: SaveMovies 호출 추가
         }
 
         public void ReturnMovie(string title)
@@ -143,7 +169,10 @@ namespace DVDManagement
                 throw new InvalidOperationException("Movie not found.");
             }
             movie.Copies++;
+
+            SaveMovies(); // 변경됨: SaveMovies 호출 추가
         }
+
 
         public Movie[] GetMoviesInDictionaryOrder()
         {
@@ -172,27 +201,73 @@ namespace DVDManagement
             return borrowInfo.Take(3).ToArray();
         }
 
-        private bool IsMovieExist(string title)
+
+        // public Movie GetMovie(int index)
+        // {
+        //     // Ensure the index is within the valid range
+        //     if (index >= 0 && index < MaxMovies)
+        //     {
+        //         return movies[index];
+        //     }
+        //     return null;
+        // }
+
+        public void SaveMovies()
         {
-            int index = GetHash(title);
-            while (movies[index] != null)
+            try
             {
-                if (movies[index]?.Title == title)
+                using (StreamWriter writer = new StreamWriter(filePath))
                 {
-                    return true;
+                    for (int i = 0; i < MaxMovies; i++)
+                    {
+                        if (movies[i] != null)
+                        {
+                            writer.WriteLine(movies[i].ToString());
+                        }
+                    }
                 }
-                index = (index + 1) % MaxMovies;
+                Console.WriteLine("Movies saved successfully."); // 디버깅을 위해 추가
             }
-            return false;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to save movies: {ex.Message}"); // 디버깅을 위해 추가
+            }
         }
 
-        public Movie GetMovie(int index)
+
+
+        public void LoadMovies()
         {
-            if (index >= 0 && index < movieCount)
+            if (File.Exists(filePath))
             {
-                return movies[index];
+                try
+                {
+                    using (StreamReader reader = new StreamReader(filePath))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            var movie = Movie.FromString(line);
+                            int index = GetHash(movie.Title);
+                            while (movies[index] != null)
+                            {
+                                index = (index + 1) % MaxMovies;
+                            }
+                            movies[index] = movie;
+                            movieCount++;
+                        }
+                    }
+                    Console.WriteLine("Movies loaded successfully."); // 디버깅을 위해 추가
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to load movies: {ex.Message}"); // 디버깅을 위해 추가
+                }
             }
-            return null;
+            else
+            {
+                Console.WriteLine("Movies file not found."); // 디버깅을 위해 추가
+            }
         }
     }
 }
