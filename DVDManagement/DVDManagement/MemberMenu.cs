@@ -54,6 +54,7 @@ namespace DVDManagement
                 WriteLine("3. Borrow a movie DVD");
                 WriteLine("4. Return a movie DVD");
                 WriteLine("5. List current borrowing movies");
+                WriteLine("6. Display the top 3 movies rented by the members");
                 WriteLine("0. Return to main menu");
                 WriteLine();
                 Write("Enter your choice \n==> ");
@@ -61,7 +62,7 @@ namespace DVDManagement
                 switch (ReadLine())
                 {
                     case "1":
-                        DisplayAllMovies(movieCollection);
+                        DisplayAllMoviesInDictionaryOrder(movieCollection);
                         break;
                     case "2":
                         DisplayMovieInfo(movieCollection);
@@ -75,27 +76,29 @@ namespace DVDManagement
                     case "5":
                         ListBorrowedMovies(member);
                         break;
+                    case "6":
+                        DisplayTop3Movies(movieCollection);
+                        break;
                     case "0":
                         return;
                     default:
-                        WriteLine("Invalid input. \nPlease enter from 0 to 5.");
+                        WriteLine("Invalid input. \nPlease enter from 0 to 6.");
                         ReadLine();
                         break;
                 }
             }
         }
-        static void DisplayAllMovies(MovieCollection movieCollection)
+        static void DisplayAllMoviesInDictionaryOrder(MovieCollection movieCollection)
         {
-            WriteLine("All Movies:");
-            Movie[] allMovies = movieCollection.GetAllMovies();
-            foreach (var movie in allMovies)
+            WriteLine("All Movies in Dictionary Order:");
+            Movie[] sortedMovies = movieCollection.GetMoviesInDictionaryOrder();
+            foreach (Movie movie in sortedMovies)
             {
                 WriteLine(movie);
             }
             WriteLine("Please enter any key to go back to the menu.");
             ReadLine();
         }
-
 
         static void DisplayMovieInfo(MovieCollection movieCollection)
         {
@@ -193,6 +196,17 @@ namespace DVDManagement
                 {
                     WriteLine(movie);
                 }
+            }
+            WriteLine("Please enter any key to go back to the menu.");
+            ReadLine();
+        }
+        static void DisplayTop3Movies(MovieCollection movieCollection)
+        {
+            WriteLine("Top 3 Borrowed Movies:");
+            var topMovies = movieCollection.GetTop3Movies();
+            foreach (var (Title, Count) in topMovies)
+            {
+                WriteLine($"{Title} - {Count} times");
             }
             WriteLine("Please enter any key to go back to the menu.");
             ReadLine();
