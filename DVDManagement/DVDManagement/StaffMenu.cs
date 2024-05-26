@@ -1,5 +1,4 @@
 using System;
-using System.Net;
 using static System.Console;
 
 namespace DVDManagement
@@ -11,12 +10,12 @@ namespace DVDManagement
             while (true)
             {
                 WriteLine("* 0 to go back");
-                Write("* Please enter staff username ==> ");
+                WriteLine("Please enter staff username ==> ");
                 string username = ReadLine() ?? string.Empty;
                 if (username == "0") return;
 
                 WriteLine("* 0 to go back");
-                Write("* Please enter staff password ==> ");
+                WriteLine("Please enter staff password ==> ");
                 string password = ReadLine() ?? string.Empty;
                 if (password == "0") return;
 
@@ -27,8 +26,8 @@ namespace DVDManagement
                 }
                 else
                 {
-                    WriteLine("Invalid username or password");
-                    WriteLine("Please enter any key to retry");
+                    WriteLine("* 0 to go back");
+                    WriteLine("Invalid username or password. Please enter any key to retry ==> ");
                     if (ReadLine() == "0") return;
                 }
             }
@@ -47,6 +46,8 @@ namespace DVDManagement
                 WriteLine("5. Find a member contact phone number, given the member's name");
                 WriteLine("6. Find members who are currently renting a particular movie");
                 WriteLine("0. Return to main menu");
+                WriteLine();
+                WriteLine("Enter your choice ==> ");
 
                 switch (ReadLine())
                 {
@@ -90,12 +91,12 @@ namespace DVDManagement
             while (true)
             {
                 WriteLine("* 0 to go back");
-                Write("* Please enter movie title ==> ");
+                WriteLine("Please enter movie title ==> ");
                 title = ReadLine();
                 if (title == "0") return;
                 if (string.IsNullOrWhiteSpace(title))
                 {
-                    WriteLine("Invalid title. Please try again.");
+                    WriteLine("Invalid input.");
                     WriteLine();
                     continue;
                 }
@@ -103,41 +104,46 @@ namespace DVDManagement
                 Movie existingMovie = movieCollection.FindMovie(title);
                 if (existingMovie != null)
                 {
-                    WriteLine("* Movie already exists. Please enter the number of copies to add.");
+                    WriteLine("Movie already exists. Please enter the number of copies to add. ==> ");
                     while (copies <= 0)
                     {
-                        Write("* Enter the number of copies (must be greater than 0) ==> ");
+                        WriteLine("* 0 to go back");
+                        Write("Enter the number of copies (must be greater than 0) ==> ");
                         string? copiesInput = ReadLine();
                         if (copiesInput == "0") return;
                         if (!int.TryParse(copiesInput, out copies) || copies <= 0)
                         {
-                            WriteLine("Invalid number of copies. Please try again.");
+                            WriteLine("Invalid input.");
                             WriteLine();
+                            continue;
                         }
                     }
                     existingMovie.Copies += copies;
                     movieCollection.SaveMovies();
-                    WriteLine("Copies added successfully. Please enter any key to add another movie.");
+                    WriteLine("* 0 to go back");
+                    WriteLine("Copies added successfully. Please enter any key to add another movie. ==> ");
                     if (ReadLine() == "0") return;
+                    continue;
                 }
                 else
                 {
                     while (!CheckGenre(genre))
                     {
+                        WriteLine("* 0 to go back");
                         WriteLine("You can choose genre from Drama, Adventure, Family, Action, Sci-fi, Comedy, Animated, Thriller, or Other");
                         Write("Enter genre ==> ");
                         genre = ReadLine();
                         if (genre == "0") return;
                         if (!CheckGenre(genre))
                         {
-                            WriteLine("Invalid genre. Please try again.");
+                            WriteLine("Invalid input.");
                             WriteLine();
-
                         }
                     }
 
                     while (!CheckClass(classification))
                     {
+                        WriteLine("* 0 to go back");
                         WriteLine("You can choose classification from General (G), Parental Guidance (PG), Mature (M15+), or Mature Accompanied (MA15+)");
                         WriteLine("Only code input is valid. e.g. Parental Guidance (X) PG (O)");
                         Write("Enter classification ==> ");
@@ -145,33 +151,33 @@ namespace DVDManagement
                         if (classification == "0") return;
                         if (!CheckClass(classification))
                         {
-                            WriteLine("Invalid classification. Please try again.");
+                            WriteLine("Invalid input.");
                             WriteLine();
                         }
                     }
 
                     while (duration < 0 || duration > 300)
                     {
-                        WriteLine("You can enter duration in minutes from 0 to 300 minutes.");
-                        Write("Enter duration in minutes ==> ");
+                        WriteLine("* 0 to go back");
+                        WriteLine("You can enter duration in minutes from 0 to 300 minutes. Please enter duration in minutes ==> ");
                         string? durationInput = ReadLine();
                         if (durationInput == "0") return;
                         if (!int.TryParse(durationInput, out duration) || duration < 0 || duration > 300)
                         {
-                            WriteLine("Invalid duration. Please try again.");
+                            WriteLine("Invalid input.");
                             WriteLine();
                         }
                     }
 
                     while (copies <= 0)
                     {
-                        WriteLine("You can enter the number of copies (must be greater than 0).");
-                        Write("Enter the number of copies ==> ");
+                        WriteLine("* 0 to go back");
+                        WriteLine("You can enter the number of copies (must be greater than 0). Please enter the number of copies ==> ");
                         string? copiesInput = ReadLine();
                         if (copiesInput == "0") return;
                         if (!int.TryParse(copiesInput, out copies) || copies <= 0)
                         {
-                            WriteLine("Invalid number of copies. Please try again.");
+                            WriteLine("Invalid number of copies.");
                             WriteLine();
                         }
                     }
@@ -180,8 +186,10 @@ namespace DVDManagement
                     movieCollection.AddMovie(movie);
                     movieCollection.SaveMovies();
 
-                    WriteLine("Movie added successfully. Please enter any key to add another movie.");
+                    WriteLine("* 0 to go back");
+                    WriteLine("Movie added successfully. Please enter any key to add another movie. ==>");
                     if (ReadLine() == "0") return;
+                    continue;
                 }
             }
         }
@@ -203,13 +211,13 @@ namespace DVDManagement
             while (true)
             {
                 WriteLine("* 0 to go back");
-                Write("* Enter movie title to remove ==> ");
+                WriteLine("Please movie title to remove ==> ");
                 string? title = ReadLine();
                 if (title == "0") return;
 
                 if (string.IsNullOrWhiteSpace(title))
                 {
-                    WriteLine("Invalid input. Please try again.");
+                    WriteLine("Invalid input.");
                     continue;
                 }
 
@@ -217,12 +225,12 @@ namespace DVDManagement
                 while (copies <= 0)
                 {
                     WriteLine("* 0 to go back");
-                    Write("Enter number of copies to remove ==> ");
+                    WriteLine("Please number of copies to remove ==> ");
                     string? copiesInput = ReadLine();
                     if (copiesInput == "0") return;
                     if (!int.TryParse(copiesInput, out copies) || copies <= 0)
                     {
-                        WriteLine("Invalid number of copies. Please try again.");
+                        WriteLine("Invalid input.");
                     }
                 }
 
@@ -231,14 +239,17 @@ namespace DVDManagement
                 {
                     movieCollection.RemoveMovie(title, copies);
                     WriteLine("* 0 to go back");
-                    Write("Movies removed successfully. Please enter any key to remove another movie.");
+                    WriteLine("Movies removed successfully. Please enter any key to remove another movie. ==>");
                     if (ReadLine() == "0") return;
+                    continue;
                 }
                 catch (InvalidOperationException ex)
                 {
                     WriteLine(ex.Message);
-                    Write("Please enter any key to try again.");
+                    WriteLine("* 0 to go back");
+                    WriteLine("Please enter any key to retry ==> ");
                     if (ReadLine() == "0") return;
+                    continue;
                 }
             }
         }
@@ -258,7 +269,7 @@ namespace DVDManagement
                 if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(phoneNumber))
                 {
                     WriteLine("* 0 to go back");
-                    Write("Invalid input. Please enter any key to try again.");
+                    WriteLine("Invalid input.");
                     if (ReadLine() == "0") return;
                     continue;
                 }
@@ -266,7 +277,7 @@ namespace DVDManagement
                 if (memberCollection.IsMemberExist(firstName, lastName))
                 {
                     WriteLine("* 0 to go back");
-                    Write("Member already exists. Please enter any key to try again.");
+                    WriteLine("Member already exists. Please enter any key to retry ==> ");
                     if (ReadLine() == "0") return;
                     continue;
                 }
@@ -279,7 +290,7 @@ namespace DVDManagement
                     if (string.IsNullOrWhiteSpace(password) || password.Length != 4 || !int.TryParse(password, out _))
                     {
                         WriteLine("* 0 to go back");
-                        Write("Invalid password. Please enter a valid 4-digit password.");
+                        WriteLine("Invalid input. Please enter any key to retry ==> ");
                         if (ReadLine() == "0") return;
                         continue;
                     }
@@ -288,7 +299,7 @@ namespace DVDManagement
                 Member member = new Member(firstName, lastName, phoneNumber, password);
                 memberCollection.AddMember(member);
                 WriteLine("* 0 to go back");
-                Write("Member registered successfully. Please enter any key to register another member.");
+                WriteLine("Member registered successfully. Please enter any key to register another member ==> ");
                 if (ReadLine() == "0") return;
                 continue;
             }
@@ -299,15 +310,15 @@ namespace DVDManagement
         {
             while (true)
             {
-                Write("Enter first name ==> ");
+                Write("Enter first name to remove member ==> ");
                 string? firstName = ReadLine();
-                Write("Enter last name ==> ");
+                Write("Enter last name to remove member ==> ");
                 string? lastName = ReadLine();
 
                 if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
                 {
                     WriteLine("* 0 to go back");
-                    WriteLine("Invalid input. Please enter any key to retry");
+                    WriteLine("Invalid input.");
                     if (ReadLine() == "0") return;
                     continue;
                 }
@@ -316,7 +327,7 @@ namespace DVDManagement
                 {
                     memberCollection.RemoveMember(firstName, lastName);
                     WriteLine("* 0 to go back");
-                    Write("Member removed successfully. Please enter any key to remove another member.");
+                    WriteLine("Member removed successfully. Please enter any key to remove another member.");
                     if (ReadLine() == "0") return;
                     continue;
                 }
@@ -341,47 +352,55 @@ namespace DVDManagement
                 if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
                 {
                     WriteLine("* 0 to go back");
-                    Write("Invalid input. Please enter any key to find another member.");
+                    WriteLine("Invalid input. Please enter any key to retry ==> ");
                     if (ReadLine() == "0") return;
                     continue;
                 }
 
                 string phoneNumber = memberCollection.FindMemberPhoneNumber(firstName, lastName);
+                WriteLine("* 0 to go back");
                 WriteLine($"Phone Number: {phoneNumber}");
-                WriteLine("Please enter any key to go back to the menu.");
-                ReadLine();
+                WriteLine("Please enter any key to find another phone number ==> ");
+                if (ReadLine() == "0") return;
+                continue;
             }
 
         }
 
         static void ListMembersBorrowingMovie(MemberCollection memberCollection)
         {
-            Write("Enter movie title ==> ");
-            string? title = ReadLine();
-
-            if (string.IsNullOrWhiteSpace(title))
+            while (true)
             {
-                WriteLine("Invalid input. Please enter any key to go back to the menu.");
-                ReadLine();
-                return;
-            }
+                Write("Please enter movie title ==> ");
+                string? title = ReadLine();
 
-            Member[] rentingMembers = memberCollection.FindMembersByMovie(title);
-            if (rentingMembers.Length > 0)
-            {
-                WriteLine("Members currently renting this movie:");
-                foreach (var member in rentingMembers)
+                if (string.IsNullOrWhiteSpace(title))
                 {
-                    WriteLine($"{member.FirstName} {member.LastName} - {member.PhoneNumber}");
-                }
-            }
-            else
-            {
-                WriteLine("No members are currently renting this movie.");
-            }
+                    WriteLine("* 0 to go back");
+                    WriteLine("Invalid input. Please enter any key to retry ==> ");
+                    if (ReadLine() == "0") return;
+                    continue;
 
-            WriteLine("Please enter any key to go back to the menu.");
-            ReadLine();
+                }
+
+                Member[] rentingMembers = memberCollection.FindMembersByMovie(title);
+                if (rentingMembers.Length > 0)
+                {
+                    WriteLine("Members currently renting this movie:");
+                    foreach (var member in rentingMembers)
+                    {
+                        WriteLine($"{member.FirstName} {member.LastName} - {member.PhoneNumber}");
+                    }
+                }
+                else
+                {
+                    WriteLine("No members are currently renting this movie.");
+                }
+                WriteLine("* 0 to go back");
+                WriteLine("Please enter any key to retry ==> ");
+                if (ReadLine() == "0") return;
+                continue;
+            }
         }
     }
 }

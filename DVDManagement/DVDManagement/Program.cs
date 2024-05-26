@@ -10,7 +10,7 @@ namespace DVDManagement
 
         static void Main(string[] args)
         {
-            // 프로그램이 종료될 때 OnProcessExit 메서드를 호출하여 데이터 저장
+            // When the program terminates, call the OnProcessExit method to save data
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
             while (true)
             {
@@ -27,7 +27,7 @@ namespace DVDManagement
                 WriteLine("2. Member");
                 WriteLine("0. End the program");
                 WriteLine();
-                Write("Enter your choice \n==> ");
+                Write("Enter your choice ==> ");
 
                 switch (ReadLine())
                 {
@@ -40,15 +40,15 @@ namespace DVDManagement
                     case "0":
                         return;
                     default:
-                        WriteLine("Invalid choice \nPlease enter 1, 2 or 0.");
-                        WriteLine("==>");
+                        WriteLine("Invalid choice");
+                        WriteLine("Please enter 1, 2 or 0 ==> ");
                         ReadLine();
                         break;
                 }
             }
         }
 
-        // * 프로그램이 종료될 때 호출되는 메서드
+        // * Method called when the program terminates
         static void OnProcessExit(object sender, EventArgs e)
         {
             memberCollection.SaveMembers();

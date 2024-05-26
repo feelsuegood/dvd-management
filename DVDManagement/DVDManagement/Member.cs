@@ -28,7 +28,7 @@ namespace DVDManagement
             }
             else
             {
-                throw new InvalidOperationException("Cannot borrow more than 5 movies or duplicate movie titles.");
+                throw new InvalidOperationException("You cannot borrow more than 5 movies or duplicate movie titles.");
             }
         }
 

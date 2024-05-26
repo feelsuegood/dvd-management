@@ -1,4 +1,6 @@
-Test1,Drama,G,300,9
+2,Adventure,G,100,1
+9,Adventure,G,100,1
+Test1,Drama,G,300,10
 Test2,Family,PG,40,3
 Test3,Action,MA15+,80,9
 Test5,Comedy,G,90,1

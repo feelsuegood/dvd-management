@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using static System.Console;
 
 namespace DVDManagement
@@ -9,21 +10,25 @@ namespace DVDManagement
         {
             while (true)
             {
-                Write("Enter first name \n* 0 to go back \n==> ");
+                WriteLine("* 0 to go back");
+                Write("Enter first name ==> ");
                 string firstName = ReadLine() ?? string.Empty;
                 if (firstName == "0") return;
 
-                Write("Enter last name \n* 0 to go back \n==> ");
+                WriteLine("* 0 to go back");
+                Write("Enter last name ==> ");
                 string lastName = ReadLine() ?? string.Empty;
                 if (lastName == "0") return;
 
-                Write("Enter password \n* 0 to go back \n==> ");
+                WriteLine("* 0 to go back");
+                Write("Enter password ==> ");
                 string password = ReadLine() ?? string.Empty;
                 if (password == "0") return;
 
                 if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(password))
                 {
-                    WriteLine("Invalid input. Please enter any key to retry or enter 0 to go back to the main menu.");
+                    WriteLine("* 0 to go back");
+                    WriteLine("Invalid input. Please enter any key to retry ==> ");
                     if (ReadLine() == "0") return;
                     continue;
                 }
@@ -36,8 +41,10 @@ namespace DVDManagement
                 }
                 else
                 {
-                    WriteLine("Member not found or invalid credentials. Please enter any key to retry or enter 0 to go back to the main menu.");
+                    WriteLine("* 0 to go back");
+                    WriteLine("Member not found or invalid credentials. Please enter any key to retry ==> ");
                     if (ReadLine() == "0") return;
+                    continue;
                 }
             }
         }
@@ -57,7 +64,7 @@ namespace DVDManagement
                 WriteLine("6. Display the top 3 movies rented by the members");
                 WriteLine("0. Return to main menu");
                 WriteLine();
-                Write("Enter your choice \n==> ");
+                WriteLine("Enter your choice ==> ");
 
                 switch (ReadLine())
                 {
@@ -82,134 +89,176 @@ namespace DVDManagement
                     case "0":
                         return;
                     default:
-                        WriteLine("Invalid input. \nPlease enter from 0 to 6.");
-                        ReadLine();
+                        WriteLine("Invalid input. Please enter from 0 to 6 ==> ");
                         break;
                 }
             }
         }
         static void DisplayAllMoviesInDictionaryOrder(MovieCollection movieCollection)
         {
-            WriteLine("All Movies in Dictionary Order:");
-            Movie[] sortedMovies = movieCollection.GetMoviesInDictionaryOrder();
-            foreach (Movie movie in sortedMovies)
+            while (true)
             {
-                WriteLine(movie);
+                WriteLine("All Movies in Dictionary Order:");
+                Movie[] sortedMovies = movieCollection.GetMoviesInDictionaryOrder();
+                foreach (Movie movie in sortedMovies)
+                {
+                    WriteLine(movie);
+                }
+                WriteLine("Please enter any key to go back ==> ");
+                continue;
             }
-            WriteLine("Please enter any key to go back to the menu.");
-            ReadLine();
+
         }
 
         static void DisplayMovieInfo(MovieCollection movieCollection)
         {
-            Write("Enter movie title \n==> ");
-            string? title = ReadLine();
-
-            if (!string.IsNullOrWhiteSpace(title))
+            while (true)
             {
-                Movie? movie = movieCollection.FindMovie(title);
-                if (movie != null)
+                Write("Enter movie title ==> ");
+                string? title = ReadLine();
+
+                if (!string.IsNullOrWhiteSpace(title))
                 {
-                    WriteLine(movie);
+                    Movie? movie = movieCollection.FindMovie(title);
+                    if (movie != null)
+                    {
+                        WriteLine(movie);
+                    }
+                    else
+                    {
+                        WriteLine("Movie not found.");
+                    }
                 }
                 else
                 {
-                    WriteLine("Movie not found.");
+                    WriteLine("* 0 to go back");
+                    WriteLine("Invalid input. Please enter any key to retry ==> ");
+                    if (ReadLine() == "0") return;
+                    continue;
                 }
+                WriteLine("* 0 to go back");
+                WriteLine("Please enter any key to continue ==> ");
+                if (ReadLine() == "0") return;
+                continue;
             }
-            else
-            {
-                WriteLine("Invalid movie title.");
-            }
-            WriteLine("Please enter any key to go back to the menu.");
-            ReadLine();
+
         }
 
 
         static void BorrowMovie(Member member, MovieCollection movieCollection)
         {
-            Write("Enter movie title to borrow \n==> ");
-            string? title = ReadLine();
-
-            if (!string.IsNullOrWhiteSpace(title))
+            while (true)
             {
-                Movie? movie = movieCollection.FindMovie(title);
-                if (movie != null)
+                WriteLine("* 0 to go back");
+                WriteLine("Please enter movie title to borrow ==> ");
+                string? title = ReadLine();
+                if (!string.IsNullOrWhiteSpace(title))
                 {
-                    try
+                    Movie? movie = movieCollection.FindMovie(title);
+                    if (movie != null)
                     {
-                        member.BorrowMovie(movie);
-                        movieCollection.BorrowMovie(title);
-                        WriteLine("Movie borrowed successfully.");
+                        try
+                        {
+                            member.BorrowMovie(movie);
+                            movieCollection.BorrowMovie(title);
+                            WriteLine("Movie borrowed successfully.");
+                        }
+                        catch (Exception e)
+                        {
+                            WriteLine(e.Message);
+                        }
                     }
-                    catch (Exception e)
+                    else
                     {
-                        WriteLine(e.Message);
+                        WriteLine("Movie not found.");
                     }
                 }
                 else
                 {
-                    WriteLine("Movie not found.");
+                    WriteLine("* 0 to go back");
+                    WriteLine("Invalid movie title. Please enter any key to retry ==> ");
+                    if (ReadLine() == "0") return;
                 }
+                WriteLine("* 0 to go back");
+                WriteLine("Please enter any key to continue ==> ");
+                if (ReadLine() == "0") return;
+                continue;
             }
-            else
-            {
-                WriteLine("Invalid movie title.");
-            }
-            WriteLine("Please enter any key to go back to the menu.");
-            ReadLine();
+
         }
 
         static void ReturnMovie(Member member, MovieCollection movieCollection)
         {
-            Write("Enter movie title to return \n==> ");
-            string? title = ReadLine();
-
-            if (!string.IsNullOrWhiteSpace(title))
+            while (true)
             {
-                Movie? movie = movieCollection.FindMovie(title);
-                if (movie != null)
+                WriteLine("* 0 to go back");
+                WriteLine("Please enter movie title to return ==> ");
+                string? title = ReadLine();
+                if (ReadLine() == "0") return;
+
+                if (!string.IsNullOrWhiteSpace(title))
                 {
-                    member.ReturnMovie(movie);
-                    movieCollection.ReturnMovie(title);
-                    WriteLine("Movie returned successfully.");
+                    Movie? movie = movieCollection.FindMovie(title);
+                    if (movie != null)
+                    {
+                        member.ReturnMovie(movie);
+                        movieCollection.ReturnMovie(title);
+                        WriteLine("Movie returned successfully.");
+                    }
+                    else
+                    {
+                        WriteLine("Movie not found.");
+                    }
                 }
                 else
                 {
-                    WriteLine("Movie not found.");
+                    WriteLine("* 0 to go back");
+                    WriteLine("Invalid input. Please enter any key to retry ==> ");
+                    if (ReadLine() == "0") return;
+                    continue;
                 }
+                WriteLine("* 0 to go back");
+                WriteLine("Please enter any key to continue ==> ");
+                if (ReadLine() == "0") return;
+                continue;
             }
-            else
-            {
-                WriteLine("Invalid movie title.");
-            }
-            WriteLine("Please enter any key to go back to the menu.");
-            ReadLine();
+
         }
 
         static void ListBorrowedMovies(Member member)
         {
-            WriteLine("Borrowed Movies:");
-            foreach (Movie? movie in member.BorrowedMovies)
+            while (true)
             {
-                if (movie != null)
+                WriteLine("Borrowed Movies:");
+                foreach (Movie? movie in member.BorrowedMovies)
                 {
-                    WriteLine(movie);
+                    if (movie != null)
+                    {
+                        WriteLine(movie);
+                    }
                 }
+                WriteLine("* 0 to go back");
+                WriteLine("Please enter any key to continue ==> ");
+                if (ReadLine() == "0") return;
+                continue;
             }
-            WriteLine("Please enter any key to go back to the menu.");
-            ReadLine();
+
         }
         static void DisplayTop3Movies(MovieCollection movieCollection)
         {
-            WriteLine("Top 3 Borrowed Movies:");
-            var topMovies = movieCollection.GetTop3Movies();
-            foreach (var (Title, Count) in topMovies)
+            while (true)
             {
-                WriteLine($"{Title} - {Count} times");
+                WriteLine("Top 3 Borrowed Movies:");
+                var topMovies = movieCollection.GetTop3Movies();
+                foreach (var (Title, Count) in topMovies)
+                {
+                    WriteLine($"{Title} - {Count} times");
+                }
+                WriteLine("* 0 to go back");
+                WriteLine("Please enter any key to continue ==> ");
+                if (ReadLine() == "0") return;
+                continue;
             }
-            WriteLine("Please enter any key to go back to the menu.");
-            ReadLine();
         }
     }
 }

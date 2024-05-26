@@ -2,7 +2,7 @@ namespace DVDManagement
 {
     public class MemberCollection
     {
-        private const int MaxMembers = 1000;
+        private const int MaxMembers = 10000;
         private Member[] members;
         private int memberCount;
         private const string filePath = "members.txt";
@@ -36,7 +36,7 @@ namespace DVDManagement
             {
                 if (members[i].FirstName == firstName && members[i].LastName == lastName)
                 {
-                    // BorrowedMovies 배열에 실제로 빌린 영화가 있는지 확인
+                    // Check if there are actually borrowed movies in the BorrowedMovies array
                     if (members[i].BorrowedMovies.Any(m => m != null))
                     {
                         throw new InvalidOperationException("Member must return all DVDs before being removed.");

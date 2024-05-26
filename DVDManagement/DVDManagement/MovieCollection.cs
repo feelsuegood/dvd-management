@@ -15,7 +15,7 @@ namespace DVDManagement
             borrowTitles = new string[MaxMovies];
             borrowCounts = new int[MaxMovies];
             movieCount = 0;
-            LoadMovies(); // 변경됨: LoadMovies 호출 추가
+            LoadMovies();
         }
 
         public int MovieCount => movieCount;
@@ -41,7 +41,7 @@ namespace DVDManagement
             if (movies[index] != null && movies[index].Title == movie.Title)
             {
                 movies[index].Copies += movie.Copies;
-                SaveMovies(); // 변경됨: SaveMovies 호출 추가
+                SaveMovies();
             }
             else if (movieCount < MaxMovies)
             {
@@ -65,7 +65,7 @@ namespace DVDManagement
                     }
                 }
 
-                SaveMovies(); // 변경됨: SaveMovies 호출 추가
+                SaveMovies();
             }
             else
             {
@@ -106,7 +106,7 @@ namespace DVDManagement
                     }
                 }
 
-                SaveMovies(); // 변경됨: SaveMovies 호출 추가
+                SaveMovies();
             }
             else
             {
@@ -154,7 +154,7 @@ namespace DVDManagement
                 borrowCounts[index]++;
             }
 
-            SaveMovies(); // 변경됨: SaveMovies 호출 추가
+            SaveMovies();
         }
 
         public void ReturnMovie(string title)
@@ -166,7 +166,7 @@ namespace DVDManagement
             }
             movie.Copies++;
 
-            SaveMovies(); // 변경됨: SaveMovies 호출 추가
+            SaveMovies();
         }
 
 
@@ -197,17 +197,6 @@ namespace DVDManagement
             return borrowInfo.Take(3).ToArray();
         }
 
-
-        // public Movie GetMovie(int index)
-        // {
-        //     // Ensure the index is within the valid range
-        //     if (index >= 0 && index < MaxMovies)
-        //     {
-        //         return movies[index];
-        //     }
-        //     return null;
-        // }
-
         public void SaveMovies()
         {
             try
@@ -222,11 +211,11 @@ namespace DVDManagement
                         }
                     }
                 }
-                Console.WriteLine("Movies saved successfully."); // 디버깅을 위해 추가
+                // Console.WriteLine("Movies saved successfully."); // Add for debugging
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to save movies: {ex.Message}"); // 디버깅을 위해 추가
+                Console.WriteLine($"Failed to save movies: {ex.Message}"); // Add for debugging
             }
         }
 
@@ -253,16 +242,16 @@ namespace DVDManagement
                             movieCount++;
                         }
                     }
-                    Console.WriteLine("Movies loaded successfully."); // 디버깅을 위해 추가
+                    // Console.WriteLine("Movies loaded successfully."); // Add for debugging
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to load movies: {ex.Message}"); // 디버깅을 위해 추가
+                    Console.WriteLine($"Failed to load movies: {ex.Message}"); // Add for debugging
                 }
             }
             else
             {
-                Console.WriteLine("Movies file not found."); // 디버깅을 위해 추가
+                Console.WriteLine("Movies file not found."); // Add for debugging
             }
         }
     }
