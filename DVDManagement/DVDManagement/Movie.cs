@@ -1,8 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using static System.Console;
-
 namespace DVDManagement
 {
     public class Movie

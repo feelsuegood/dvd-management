@@ -1,8 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using static System.Console;
-
 namespace DVDManagement
 {
     public class MemberCollection
@@ -41,7 +36,8 @@ namespace DVDManagement
             {
                 if (members[i].FirstName == firstName && members[i].LastName == lastName)
                 {
-                    if (members[i].BorrowedMovies.Length > 0)
+                    // BorrowedMovies 배열에 실제로 빌린 영화가 있는지 확인
+                    if (members[i].BorrowedMovies.Any(m => m != null))
                     {
                         throw new InvalidOperationException("Member must return all DVDs before being removed.");
                     }

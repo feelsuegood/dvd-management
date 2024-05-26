@@ -1,8 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using static System.Console;
-
 namespace DVDManagement
 {
     public class Member
@@ -78,21 +73,21 @@ namespace DVDManagement
             return false;
         }
 
+
         public string Serialize()
         {
-            string borrowedMovies = string.Join(",", BorrowedMovies.Select(m => m?.Title ?? "null"));
+            string borrowedMovies = string.Join(",", BorrowedMovies.Where(m => m != null).Select(m => m.Title));
             return $"{FirstName},{LastName},{PhoneNumber},{Password},{borrowedMovies}";
         }
-
         public static Member Deserialize(string data)
         {
             var parts = data.Split(',');
             var member = new Member(parts[0], parts[1], parts[2], parts[3]);
-            for (int i = 0; i < 5; i++)
+            for (int i = 4; i < parts.Length; i++)
             {
-                if (parts[4 + i] != "null")
+                if (!string.IsNullOrEmpty(parts[i]) && parts[i] != "null")
                 {
-                    member.BorrowedMovies[i] = new Movie(parts[4 + i], "", "", 0, 1); // Placeholder for deserialized movies
+                    member.BorrowedMovies[member.borrowedMovieCount++] = new Movie(parts[i], "", "", 0, 1); // 실제 영화 정보로 교체 필요
                 }
             }
             return member;
