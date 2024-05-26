@@ -104,8 +104,10 @@ namespace DVDManagement
                 {
                     WriteLine(movie);
                 }
+                WriteLine();
                 WriteLine("Please enter any key to go back ==> ");
-                continue;
+                ReadLine();
+                return;
             }
 
         }
@@ -150,7 +152,7 @@ namespace DVDManagement
             while (true)
             {
                 WriteLine("* 0 to go back");
-                WriteLine("Please enter movie title to borrow ==> ");
+                Write("Please enter movie title to borrow ==> ");
                 string? title = ReadLine();
                 if (!string.IsNullOrWhiteSpace(title))
                 {
@@ -192,7 +194,7 @@ namespace DVDManagement
             while (true)
             {
                 WriteLine("* 0 to go back");
-                WriteLine("Please enter movie title to return ==> ");
+                Write("Please enter movie title to return ==> ");
                 string? title = ReadLine();
                 if (ReadLine() == "0") return;
 
