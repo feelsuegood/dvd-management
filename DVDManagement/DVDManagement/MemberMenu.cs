@@ -1,5 +1,4 @@
 using System;
-using System.Net;
 using static System.Console;
 
 namespace DVDManagement
@@ -27,29 +26,27 @@ namespace DVDManagement
 
                 if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(password))
                 {
-                    WriteLine("* 0 to go back");
-                    WriteLine("Invalid input. Please enter any key to retry ==> ");
-                    if (ReadLine() == "0") return;
+                    WriteLine("Invalid input. Please enter valid first name, last name or password.");
+                    WriteLine();
                     continue;
                 }
 
                 Member? member = memberCollection.FindMember(firstName, lastName);
                 if (member != null && member.Password == password)
                 {
-                    MemberOnlyMenu(member, movieCollection);
+                    MemberOnlyMenu(member, movieCollection, memberCollection);
                     return;
                 }
                 else
                 {
-                    WriteLine("* 0 to go back");
-                    WriteLine("Member not found or invalid credentials. Please enter any key to retry ==> ");
-                    if (ReadLine() == "0") return;
+                    WriteLine("Member not found or invalid credentials.");
+                    WriteLine();
                     continue;
                 }
             }
         }
 
-        private static void MemberOnlyMenu(Member member, MovieCollection movieCollection)
+        private static void MemberOnlyMenu(Member member, MovieCollection movieCollection, MemberCollection memberCollection)
         {
             while (true)
             {
@@ -75,10 +72,10 @@ namespace DVDManagement
                         DisplayMovieInfo(movieCollection);
                         break;
                     case "3":
-                        BorrowMovie(member, movieCollection);
+                        BorrowMovie(member, memberCollection, movieCollection);
                         break;
                     case "4":
-                        ReturnMovie(member, movieCollection);
+                        ReturnMovie(member, memberCollection, movieCollection);
                         break;
                     case "5":
                         ListBorrowedMovies(member);
@@ -116,8 +113,10 @@ namespace DVDManagement
         {
             while (true)
             {
+                WriteLine("* 0 to go back");
                 Write("Enter movie title ==> ");
                 string? title = ReadLine();
+                if (title == "0") return;
 
                 if (!string.IsNullOrWhiteSpace(title))
                 {
@@ -128,32 +127,29 @@ namespace DVDManagement
                     }
                     else
                     {
-                        WriteLine("Movie not found.");
+                        WriteLine("Movie not found. Please enter a valid movie title.");
+                        WriteLine();
                     }
                 }
                 else
                 {
-                    WriteLine("* 0 to go back");
-                    WriteLine("Invalid input. Please enter any key to retry ==> ");
-                    if (ReadLine() == "0") return;
+                    WriteLine("Invalid input. Please enter a valid movie title.");
+                    WriteLine();
                     continue;
                 }
-                WriteLine("* 0 to go back");
-                WriteLine("Please enter any key to continue ==> ");
-                if (ReadLine() == "0") return;
                 continue;
             }
 
         }
 
-
-        static void BorrowMovie(Member member, MovieCollection movieCollection)
+        static void BorrowMovie(Member member, MemberCollection memberCollection, MovieCollection movieCollection)
         {
             while (true)
             {
                 WriteLine("* 0 to go back");
                 Write("Please enter movie title to borrow ==> ");
                 string? title = ReadLine();
+                if (title == "0") return;
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     Movie? movie = movieCollection.FindMovie(title);
@@ -161,67 +157,64 @@ namespace DVDManagement
                     {
                         try
                         {
-                            member.BorrowMovie(movie);
+                            memberCollection.BorrowMovie(member, movie);
                             movieCollection.BorrowMovie(title);
                             WriteLine("Movie borrowed successfully.");
+                            WriteLine();
                         }
                         catch (Exception e)
                         {
                             WriteLine(e.Message);
+                            WriteLine();
                         }
                     }
                     else
                     {
-                        WriteLine("Movie not found.");
+                        WriteLine("Movie not found. Please enter a valid movie title.");
+                        WriteLine();
                     }
                 }
                 else
                 {
-                    WriteLine("* 0 to go back");
-                    WriteLine("Invalid movie title. Please enter any key to retry ==> ");
-                    if (ReadLine() == "0") return;
+                    WriteLine("Invalid movie title. Please enter a valid movie title.");
+                    WriteLine();
                 }
-                WriteLine("* 0 to go back");
-                WriteLine("Please enter any key to continue ==> ");
-                if (ReadLine() == "0") return;
                 continue;
             }
 
         }
 
-        static void ReturnMovie(Member member, MovieCollection movieCollection)
+        static void ReturnMovie(Member member, MemberCollection memberCollection, MovieCollection movieCollection)
         {
             while (true)
             {
                 WriteLine("* 0 to go back");
                 Write("Please enter movie title to return ==> ");
                 string? title = ReadLine();
-                if (ReadLine() == "0") return;
+                if (title == "0") return;
 
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     Movie? movie = movieCollection.FindMovie(title);
                     if (movie != null)
                     {
-                        member.ReturnMovie(movie);
+                        memberCollection.ReturnMovie(member, movie);
                         movieCollection.ReturnMovie(title);
                         WriteLine("Movie returned successfully.");
+                        WriteLine();
                     }
                     else
                     {
-                        WriteLine("Movie not found.");
+                        WriteLine("Movie not found. Please enter a valid movie title.");
+                        WriteLine();
                     }
                 }
                 else
                 {
-                    WriteLine("* 0 to go back");
-                    WriteLine("Invalid input. Please enter any key to retry ==> ");
-                    if (ReadLine() == "0") return;
+                    WriteLine("Invalid input. Please enter a valid movie title.");
+                    WriteLine();
                     continue;
                 }
-                WriteLine("* 0 to go back");
-                WriteLine("Please enter any key to continue ==> ");
-                if (ReadLine() == "0") return;
                 continue;
             }
 
@@ -240,7 +233,6 @@ namespace DVDManagement
                     }
                 }
                 WriteLine("* 0 to go back");
-                WriteLine("Please enter any key to continue ==> ");
                 if (ReadLine() == "0") return;
                 continue;
             }
@@ -257,7 +249,7 @@ namespace DVDManagement
                     WriteLine($"{Title} - {Count} times");
                 }
                 WriteLine("* 0 to go back");
-                WriteLine("Please enter any key to continue ==> ");
+                // WriteLine("Please enter any key to continue ==> ");
                 if (ReadLine() == "0") return;
                 continue;
             }

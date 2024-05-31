@@ -87,7 +87,7 @@ namespace DVDManagement
             {
                 if (!string.IsNullOrEmpty(parts[i]) && parts[i] != "null")
                 {
-                    member.BorrowedMovies[member.borrowedMovieCount++] = new Movie(parts[i], "", "", 0, 1); // 실제 영화 정보로 교체 필요
+                    member.BorrowedMovies[member.borrowedMovieCount++] = new Movie(parts[i], "", "", 0, 1);
                 }
             }
             return member;

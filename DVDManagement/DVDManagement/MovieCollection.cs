@@ -219,8 +219,6 @@ namespace DVDManagement
             }
         }
 
-
-
         public void LoadMovies()
         {
             if (File.Exists(filePath))

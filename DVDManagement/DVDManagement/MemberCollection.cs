@@ -108,6 +108,18 @@ namespace DVDManagement
             return false;
         }
 
+        public void BorrowMovie(Member member, Movie movie)
+        {
+            member.BorrowMovie(movie);
+            SaveMembers();
+        }
+
+        public void ReturnMovie(Member member, Movie movie)
+        {
+            member.ReturnMovie(movie);
+            SaveMembers();
+        }
+
         public Member? GetMember(int index)
         {
             if (index >= 0 && index < memberCount)
