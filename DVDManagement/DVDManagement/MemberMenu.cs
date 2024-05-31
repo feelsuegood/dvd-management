@@ -196,7 +196,7 @@ namespace DVDManagement
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     Movie? movie = movieCollection.FindMovie(title);
-                    if (movie != null)
+                    if (movie != null && member.HasBorrowedMovie(title))
                     {
                         memberCollection.ReturnMovie(member, movie);
                         movieCollection.ReturnMovie(title);
