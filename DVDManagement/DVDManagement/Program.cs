@@ -40,8 +40,7 @@ namespace DVDManagement
                     case "0":
                         return;
                     default:
-                        WriteLine("Invalid choice");
-                        WriteLine("Please enter 1, 2 or 0 ==> ");
+                        WriteLine("\nInvalid choice. Please enter 1, 2 or 0. \nPlease enter any key to retry ==> ");
                         ReadLine();
                         break;
                 }

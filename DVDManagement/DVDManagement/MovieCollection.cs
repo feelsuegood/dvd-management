@@ -1,25 +1,22 @@
 namespace DVDManagement
 {
-    public class MovieCollection
+    public class MovieCollection : iMovieCollection
     {
         private const int MaxMovies = 1000;
         private Movie[] movies;
         private int movieCount;
-        private string[] borrowTitles;
-        private int[] borrowCounts;
         private const string filePath = "movies.txt";
 
         public MovieCollection()
         {
             movies = new Movie[MaxMovies];
-            borrowTitles = new string[MaxMovies];
-            borrowCounts = new int[MaxMovies];
             movieCount = 0;
             LoadMovies();
         }
 
         public int MovieCount => movieCount;
 
+        // Hash function: division method
         private int GetHash(string title)
         {
             int hash = 0;
@@ -33,6 +30,8 @@ namespace DVDManagement
         public void AddMovie(Movie movie)
         {
             int index = GetHash(movie.Title);
+
+            // Collision handling: quadratic probing (open addressing)
             while (movies[index] != null && movies[index].Title != movie.Title)
             {
                 index = (index + 1) % MaxMovies;
@@ -51,20 +50,6 @@ namespace DVDManagement
                 }
                 movies[index] = movie;
                 movieCount++;
-
-                if (Array.IndexOf(borrowTitles, movie.Title) == -1)
-                {
-                    for (int i = 0; i < borrowTitles.Length; i++)
-                    {
-                        if (borrowTitles[i] == null)
-                        {
-                            borrowTitles[i] = movie.Title;
-                            borrowCounts[i] = 0;
-                            break;
-                        }
-                    }
-                }
-
                 SaveMovies();
             }
             else
@@ -76,6 +61,8 @@ namespace DVDManagement
         public void RemoveMovie(string title, int copies)
         {
             int index = GetHash(title);
+
+            // Collision handling: quadratic probing (open addressing)
             while (movies[index] != null && movies[index].Title != title)
             {
                 index = (index + 1) % MaxMovies;
@@ -117,6 +104,8 @@ namespace DVDManagement
         public Movie FindMovie(string title)
         {
             int index = GetHash(title);
+
+            // Collision handling: quadratic probing (open addressing)
             while (movies[index] != null && movies[index].Title != title)
             {
                 index = (index + 1) % MaxMovies;
@@ -142,17 +131,12 @@ namespace DVDManagement
         public void BorrowMovie(string title)
         {
             Movie movie = FindMovie(title);
-            if (movie == null || movie.Copies <= 0)
+            if (movie == null || movie.Copies < movie.CurrentBorrowCount)
             {
                 throw new InvalidOperationException("Movie not available.");
             }
-            movie.Copies--;
-
-            int index = Array.IndexOf(borrowTitles, title);
-            if (index != -1)
-            {
-                borrowCounts[index]++;
-            }
+            movie.CurrentBorrowCount++;
+            movie.TotalBorrowCount++;
 
             SaveMovies();
         }
@@ -164,11 +148,17 @@ namespace DVDManagement
             {
                 throw new InvalidOperationException("Movie not found.");
             }
-            movie.Copies++;
+            if (movie.CurrentBorrowCount > 0)
+            {
+                movie.CurrentBorrowCount--;
+            }
+            else
+            {
+                throw new InvalidOperationException("No borrowed copies to return.");
+            }
 
             SaveMovies();
         }
-
 
         public Movie[] GetMoviesInDictionaryOrder()
         {
@@ -185,15 +175,75 @@ namespace DVDManagement
             return sortedMovies;
         }
 
+        // Use Merge Sort to sort movies by borrow count
+        private void Merge((string Title, int Count)[] array, int left, int mid, int right)
+        {
+            int n1 = mid - left + 1;
+            int n2 = right - mid;
+
+            var leftArray = new (string Title, int Count)[n1];
+            var rightArray = new (string Title, int Count)[n2];
+
+            for (int i = 0; i < n1; ++i)
+                leftArray[i] = array[left + i];
+            for (int j = 0; j < n2; ++j)
+                rightArray[j] = array[mid + 1 + j];
+
+            int k = left;
+            int iIndex = 0, jIndex = 0;
+
+            while (iIndex < n1 && jIndex < n2)
+            {
+                if (leftArray[iIndex].Count >= rightArray[jIndex].Count)
+                {
+                    array[k] = leftArray[iIndex];
+                    iIndex++;
+                }
+                else
+                {
+                    array[k] = rightArray[jIndex];
+                    jIndex++;
+                }
+                k++;
+            }
+
+            while (iIndex < n1)
+            {
+                array[k] = leftArray[iIndex];
+                iIndex++;
+                k++;
+            }
+
+            while (jIndex < n2)
+            {
+                array[k] = rightArray[jIndex];
+                jIndex++;
+                k++;
+            }
+        }
+
+        private void MergeSort((string Title, int Count)[] array, int left, int right)
+        {
+            if (left < right)
+            {
+                int mid = left + (right - left) / 2;
+
+                MergeSort(array, left, mid);
+                MergeSort(array, mid + 1, right);
+
+                Merge(array, left, mid, right);
+            }
+        }
+
         public (string Title, int Count)[] GetTop3Movies()
         {
-            int length = borrowCounts.Length;
-            (string Title, int Count)[] borrowInfo = new (string, int)[length];
-            for (int i = 0; i < length; i++)
-            {
-                borrowInfo[i] = (borrowTitles[i], borrowCounts[i]);
-            }
-            Array.Sort(borrowInfo, (x, y) => y.Count.CompareTo(x.Count));
+            Movie[] allMovies = GetAllMovies();
+            (string Title, int Count)[] borrowInfo = allMovies
+                .Select(m => (m.Title, m.TotalBorrowCount))
+                .ToArray();
+
+            MergeSort(borrowInfo, 0, borrowInfo.Length - 1);
+
             return borrowInfo.Take(3).ToArray();
         }
 
@@ -211,11 +261,10 @@ namespace DVDManagement
                         }
                     }
                 }
-                // Console.WriteLine("Movies saved successfully."); // Add for debugging
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to save movies: {ex.Message}"); // Add for debugging
+                Console.WriteLine($"Failed to save movies: {ex.Message}");
             }
         }
 
@@ -240,16 +289,15 @@ namespace DVDManagement
                             movieCount++;
                         }
                     }
-                    // Console.WriteLine("Movies loaded successfully."); // Add for debugging
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to load movies: {ex.Message}"); // Add for debugging
+                    Console.WriteLine($"Failed to load movies: {ex.Message}");
                 }
             }
             else
             {
-                Console.WriteLine("Movies file not found."); // Add for debugging
+                Console.WriteLine("Movies file not found.");
             }
         }
     }

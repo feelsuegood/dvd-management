@@ -9,25 +9,24 @@ namespace DVDManagement
         {
             while (true)
             {
-                WriteLine("* 0 to go back");
+                WriteLine("\n* 0 to go back");
                 Write("Enter first name ==> ");
                 string firstName = ReadLine() ?? string.Empty;
                 if (firstName == "0") return;
 
-                WriteLine("* 0 to go back");
+                WriteLine("\n* 0 to go back");
                 Write("Enter last name ==> ");
                 string lastName = ReadLine() ?? string.Empty;
                 if (lastName == "0") return;
 
-                WriteLine("* 0 to go back");
+                WriteLine("\n* 0 to go back");
                 Write("Enter password ==> ");
                 string password = ReadLine() ?? string.Empty;
                 if (password == "0") return;
 
                 if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(password))
                 {
-                    WriteLine("Invalid input. Please enter valid first name, last name or password.");
-                    WriteLine();
+                    WriteLine("\nInvalid input. Please enter valid first name, last name or password.");
                     continue;
                 }
 
@@ -40,7 +39,6 @@ namespace DVDManagement
                 else
                 {
                     WriteLine("Member not found or invalid credentials.");
-                    WriteLine();
                     continue;
                 }
             }
@@ -60,8 +58,8 @@ namespace DVDManagement
                 WriteLine("5. List current borrowing movies");
                 WriteLine("6. Display the top 3 movies rented by the members");
                 WriteLine("0. Return to main menu");
-                WriteLine();
-                WriteLine("Enter your choice ==> ");
+
+                WriteLine("\nEnter your choice ==> ");
 
                 switch (ReadLine())
                 {
@@ -86,11 +84,12 @@ namespace DVDManagement
                     case "0":
                         return;
                     default:
-                        WriteLine("Invalid input. Please enter from 0 to 6 ==> ");
+                        WriteLine("\nInvalid choice. Please enter from 0 to 6. \nPlease enter any key to retry ==> ");
                         break;
                 }
             }
         }
+
         static void DisplayAllMoviesInDictionaryOrder(MovieCollection movieCollection)
         {
             while (true)
@@ -99,21 +98,20 @@ namespace DVDManagement
                 Movie[] sortedMovies = movieCollection.GetMoviesInDictionaryOrder();
                 foreach (Movie movie in sortedMovies)
                 {
-                    WriteLine(movie);
+                    WriteLine($"Title: {movie.Title}, Currently available copies: {movie.Copies - movie.CurrentBorrowCount}");
                 }
-                WriteLine();
-                WriteLine("Please enter any key to go back ==> ");
+
+                WriteLine("\nPlease enter any key to go back ==> ");
                 ReadLine();
                 return;
             }
-
         }
 
         static void DisplayMovieInfo(MovieCollection movieCollection)
         {
             while (true)
             {
-                WriteLine("* 0 to go back");
+                WriteLine("\n* 0 to go back");
                 Write("Enter movie title ==> ");
                 string? title = ReadLine();
                 if (title == "0") return;
@@ -123,30 +121,25 @@ namespace DVDManagement
                     Movie? movie = movieCollection.FindMovie(title);
                     if (movie != null)
                     {
-                        WriteLine(movie);
+                        WriteLine($"Title: {movie.Title}, Genre: {movie.Genre}, Classification: {movie.Classification}, Duration: {movie.Duration} mins, Copies: {movie.Copies}, Currently Borrowed: {movie.CurrentBorrowCount}, Total Borrow Count: {movie.TotalBorrowCount}");
                     }
                     else
                     {
                         WriteLine("Movie not found. Please enter a valid movie title.");
-                        WriteLine();
                     }
                 }
                 else
                 {
-                    WriteLine("Invalid input. Please enter a valid movie title.");
-                    WriteLine();
-                    continue;
+                    WriteLine("\nInvalid input. Please enter a valid movie title.");
                 }
-                continue;
             }
-
         }
 
         static void BorrowMovie(Member member, MemberCollection memberCollection, MovieCollection movieCollection)
         {
             while (true)
             {
-                WriteLine("* 0 to go back");
+                WriteLine("\n* 0 to go back");
                 Write("Please enter movie title to borrow ==> ");
                 string? title = ReadLine();
                 if (title == "0") return;
@@ -160,35 +153,29 @@ namespace DVDManagement
                             memberCollection.BorrowMovie(member, movie);
                             movieCollection.BorrowMovie(title);
                             WriteLine("Movie borrowed successfully.");
-                            WriteLine();
                         }
                         catch (Exception e)
                         {
                             WriteLine(e.Message);
-                            WriteLine();
                         }
                     }
                     else
                     {
                         WriteLine("Movie not found. Please enter a valid movie title.");
-                        WriteLine();
                     }
                 }
                 else
                 {
                     WriteLine("Invalid movie title. Please enter a valid movie title.");
-                    WriteLine();
                 }
-                continue;
             }
-
         }
 
         static void ReturnMovie(Member member, MemberCollection memberCollection, MovieCollection movieCollection)
         {
             while (true)
             {
-                WriteLine("* 0 to go back");
+                WriteLine("\n* 0 to go back");
                 Write("Please enter movie title to return ==> ");
                 string? title = ReadLine();
                 if (title == "0") return;
@@ -201,23 +188,17 @@ namespace DVDManagement
                         memberCollection.ReturnMovie(member, movie);
                         movieCollection.ReturnMovie(title);
                         WriteLine("Movie returned successfully.");
-                        WriteLine();
                     }
                     else
                     {
                         WriteLine("Movie not found. Please enter a valid movie title.");
-                        WriteLine();
                     }
                 }
                 else
                 {
-                    WriteLine("Invalid input. Please enter a valid movie title.");
-                    WriteLine();
-                    continue;
+                    WriteLine("\nInvalid input. Please enter a valid movie title.");
                 }
-                continue;
             }
-
         }
 
         static void ListBorrowedMovies(Member member)
@@ -225,35 +206,53 @@ namespace DVDManagement
             while (true)
             {
                 WriteLine("Borrowed Movies:");
-                foreach (Movie? movie in member.BorrowedMovies)
+                if (member.BorrowedMovies == null || member.BorrowedMovies.Length == 0)
                 {
-                    if (movie != null)
+                    WriteLine("No borrowed movies.");
+                }
+                else
+                {
+                    bool hasBorrowedMovies = false;
+                    foreach (Movie? movie in member.BorrowedMovies)
                     {
-                        WriteLine(movie);
+                        if (movie != null)
+                        {
+                            WriteLine($"Title: {movie.Title}");
+                            hasBorrowedMovies = true;
+                        }
+                    }
+                    if (!hasBorrowedMovies)
+                    {
+                        WriteLine("No borrowed movie.");
                     }
                 }
-                WriteLine("* 0 to go back");
-                if (ReadLine() == "0") return;
-                continue;
+                WriteLine("\nPlease enter any key to go back ==> ");
+                ReadLine();
+                return;
             }
-
         }
+
         static void DisplayTop3Movies(MovieCollection movieCollection)
         {
             while (true)
             {
                 WriteLine("Top 3 Borrowed Movies:");
                 var topMovies = movieCollection.GetTop3Movies();
-                foreach (var (Title, Count) in topMovies)
+                if (topMovies.Length == 0)
                 {
-                    WriteLine($"{Title} - {Count} times");
+                    WriteLine("No movies have been borrowed.");
                 }
-                WriteLine("* 0 to go back");
-                // WriteLine("Please enter any key to continue ==> ");
-                if (ReadLine() == "0") return;
-                continue;
+                else
+                {
+                    foreach (var (Title, Count) in topMovies)
+                    {
+                        WriteLine($"{Title} - {Count} times");
+                    }
+                }
+                WriteLine("\nPlease enter any key to go back ==> ");
+                ReadLine();
+                return;
             }
         }
     }
 }
-
